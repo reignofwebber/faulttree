@@ -26,8 +26,6 @@ public:
     {
         if(change == GraphicsItemChange::ItemPositionChange)
         {
-            qDebug() << "valuechange.." << scenePos() << ",,," << mapToScene(pos()) << "..." << mapToParent(pos());
-
             emit nodeMove(scenePos() + QPointF(m_r, m_r));
         }
         return QGraphicsEllipseItem::itemChange(change, value);

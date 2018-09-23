@@ -6,6 +6,8 @@
 
 #include "graphicsscene.h"
 
+class GraphicsScene;
+
 
 class NodeItem : public QObject
 {
