@@ -1,63 +1,41 @@
 #include "graphicsnode.h"
-#include <QPainter>
 
 
-
-
-GraphicsNode::GraphicsNode(const QString &id, QPointF pos)
-    :id(id), radius(30),position(pos)
+NodeItem::NodeItem(GraphicsScene *scene, const QString &id, bool value, QPointF pos)
+    :m_scene(scene), id(id), value(true), radius(30)
 {
-    setPos(pos);
-    setFlag(QGraphicsItem::ItemIsSelectable);
-}
+    m_node = new EllipseItem(-radius, -radius, 2*radius,2*radius);
+    m_nodeId = new QGraphicsTextItem(id);
+    m_nodeValue = new QGraphicsTextItem(QString::number(value));
 
-QRectF GraphicsNode::boundingRect() const
-{
-    return QRectF(position.x()-3*radius, position.y()-radius, 6*radius, 3.5*radius);
-}
 
-void GraphicsNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
+    m_nodeId->setFlags(QGraphicsItem::ItemIsSelectable);
+    m_nodeId->setTextInteractionFlags(Qt::TextEditorInteraction);
 
-    painter->drawEllipse(position,radius,radius);
-    QRectF elipseRect(position.x()-radius, position.y()-radius, 2*radius, 2*radius);
-    painter->drawText(elipseRect, Qt::AlignHCenter | Qt::AlignVCenter, "jjj");
-    QRectF descRect(elipseRect.adjusted(0,2*radius + 10,0,2*radius));
-    painter->drawText(descRect, Qt::AlignHCenter, "TEST");
-}
+    m_nodeValue->setFlags(QGraphicsItem::ItemIsSelectable);
+    m_nodeValue->setTextInteractionFlags(Qt::TextEditorInteraction);
 
-void GraphicsNode::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-    qDebug() << event->pos() << "..." << mapToScene(event->pos());
-    setPos(mapToScene(event->pos()));
-}
+    onNodeMove(m_node->pos());
+    addToScene();
 
-void GraphicsNode::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    qDebug() << event->type() << "..MousePress";
-    setCursor(Qt::ClosedHandCursor);
-}
 
-void GraphicsNode::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    qDebug() << event->type() << "..MouseRelease";
-    setCursor(Qt::OpenHandCursor);
-}
-
-void GraphicsNode::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
-{
+    connect(m_node, SIGNAL(nodeMove(QPointF)), this, SLOT(onNodeMove(QPointF)));
 
 }
 
-void GraphicsNode::setPosition(QPointF point)
+void NodeItem::onNodeMove(const QPointF &pos)
 {
-    this->position = point;
-    update();
+//    auto scenePos(pos+QPointF(radius, radius));
+    auto center(pos-m_nodeValue->boundingRect().center());
+    m_nodeValue->setPos(center);
+    center = pos-m_nodeId->boundingRect().center();
+    m_nodeId->setPos(center.x(), center.y()+radius+m_nodeId->boundingRect().height()/2);
 }
 
-QPointF GraphicsNode::getPosition()
+void NodeItem::addToScene()
 {
-    return position;
+    m_scene->addItem(m_node);
+    m_scene->addItem(m_nodeValue);
+    m_scene->addItem(m_nodeId);
 }
+

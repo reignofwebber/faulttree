@@ -2,34 +2,37 @@
 #define GRAPHICSNODE_H
 
 #include <QtWidgets>
+#include <ellipseitem.h>
+
+#include "graphicsscene.h"
 
 
-
-
-class GraphicsNode : public QGraphicsItem
+class NodeItem : public QObject
 {
-public:
-    GraphicsNode(const QString &id, QPointF pos = QPointF(0,0));
-
-    QRectF boundingRect() const override;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
+    Q_OBJECT
 
 public:
-    void setPosition(QPointF);
-    QPointF getPosition();
+    NodeItem(GraphicsScene *scene, const QString &id, bool value = true, QPointF pos = QPointF(0,0));
 
 private:
-    QString id;
-    QTextItem text_id;
+   void addToScene();
 
+private slots:
+   void onNodeMove(const QPointF &pos);
+
+
+
+private:
+    GraphicsScene *m_scene;
+
+    QString id;
+    bool value;
     qreal radius;
-    QPointF position;
+
+    EllipseItem *m_node;
+    QGraphicsTextItem *m_nodeId;
+    QGraphicsTextItem *m_nodeValue;
+
 };
 
 

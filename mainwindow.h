@@ -4,6 +4,7 @@
 #include <QtWidgets>
 #include "ui_mainwindow.h"
 #include "graphicsnode.h"
+#include "graphicsscene.h"
 
 class MainWindow : public QMainWindow, public Ui::MainWindow
 {
@@ -20,6 +21,7 @@ public slots:
 
 
 private:
+    GraphicsScene *m_scene;
 };
 
 #endif // MAINWINDOW_H

@@ -10,12 +10,14 @@ MainWindow::MainWindow(QWidget *parent)
     toolsGroup->addAction(actionNode);
     toolsGroup->addAction(actionLine);
 
-    QGraphicsScene *scene = new QGraphicsScene(this);
-    graphicsView->setScene(scene);
+    m_scene = new GraphicsScene(this);
+    graphicsView->setScene(m_scene);
 
-    GraphicsNode *node = new GraphicsNode("jjj");
-    scene->addItem(node);
 
+//    DiagramTextItem * text = new DiagramTextItem("abc");
+//    m_scene->addItem(text);
+
+    NodeItem *item = new NodeItem(m_scene, "TEST");
 
     connect(actionCursor,SIGNAL(toggled(bool)), this, SLOT(setCurrentItem(bool)));
     connect(actionNode, SIGNAL(toggled(bool)), this, SLOT(setCurrentItem(bool)));
