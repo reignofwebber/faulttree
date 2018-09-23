@@ -5,7 +5,7 @@ NodeItem::NodeItem(GraphicsScene *scene, const QString &id, QPointF pos, bool va
     :m_scene(scene), id(id), value(true), radius(30)
 {
     qDebug() << "Should.." << pos;
-    m_node = new EllipseItem(pos.x()-radius, pos.y()-radius, 2*radius,2*radius);
+    m_node = new EllipseItem(pos.x(), pos.y(), radius);
     m_nodeId = new QGraphicsTextItem(id);
     m_nodeValue = new QGraphicsTextItem(QString::number(value));
 
@@ -26,7 +26,6 @@ NodeItem::NodeItem(GraphicsScene *scene, const QString &id, QPointF pos, bool va
 
 void NodeItem::onNodeMove(const QPointF &pos)
 {
-    qDebug() << "Move.." << pos;
     auto center(pos-m_nodeValue->boundingRect().center());
     m_nodeValue->setPos(center);
     center = pos-m_nodeId->boundingRect().center();
