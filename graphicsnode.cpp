@@ -1,10 +1,11 @@
 #include "graphicsnode.h"
 
 
-NodeItem::NodeItem(GraphicsScene *scene, const QString &id, bool value, QPointF pos)
+NodeItem::NodeItem(GraphicsScene *scene, const QString &id, QPointF pos, bool value)
     :m_scene(scene), id(id), value(true), radius(30)
 {
-    m_node = new EllipseItem(-radius, -radius, 2*radius,2*radius);
+    qDebug() << "Should.." << pos;
+    m_node = new EllipseItem(pos.x()-radius, pos.y()-radius, 2*radius,2*radius);
     m_nodeId = new QGraphicsTextItem(id);
     m_nodeValue = new QGraphicsTextItem(QString::number(value));
 
@@ -15,7 +16,7 @@ NodeItem::NodeItem(GraphicsScene *scene, const QString &id, bool value, QPointF 
     m_nodeValue->setFlags(QGraphicsItem::ItemIsSelectable);
     m_nodeValue->setTextInteractionFlags(Qt::TextEditorInteraction);
 
-    onNodeMove(m_node->pos());
+    onNodeMove(pos);
     addToScene();
 
 
@@ -25,7 +26,7 @@ NodeItem::NodeItem(GraphicsScene *scene, const QString &id, bool value, QPointF 
 
 void NodeItem::onNodeMove(const QPointF &pos)
 {
-//    auto scenePos(pos+QPointF(radius, radius));
+    qDebug() << "Move.." << pos;
     auto center(pos-m_nodeValue->boundingRect().center());
     m_nodeValue->setPos(center);
     center = pos-m_nodeId->boundingRect().center();

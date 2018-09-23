@@ -12,8 +12,13 @@ class GraphicsScene : public QGraphicsScene
 public:
     GraphicsScene(QObject *parent = 0);
 
-private:
-    QString getTempNodeId();
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+
+
+
+
+signals:
+    void pressScene(const QPointF &);
 };
 
 #endif // GRAPHICSSCENE_H

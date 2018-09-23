@@ -17,14 +17,14 @@ public:
                     QGraphicsItem::ItemIsSelectable
                     | QGraphicsItem::ItemIsMovable
                     | QGraphicsItem::ItemSendsGeometryChanges);
-        qDebug() << "customELlipse";
+        qDebug() << "customELlipse" << ".." << x << ".." << y;
     }
 
     virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value)
     {
-        qDebug() << change << "///" << value;
         if(change == GraphicsItemChange::ItemPositionChange)
         {
+            qDebug() << "valuechange.." << value;
             emit nodeMove(value.toPointF());
         }
         return QGraphicsEllipseItem::itemChange(change, value);

@@ -12,7 +12,7 @@ class NodeItem : public QObject
     Q_OBJECT
 
 public:
-    NodeItem(GraphicsScene *scene, const QString &id, bool value = true, QPointF pos = QPointF(0,0));
+    NodeItem(GraphicsScene *scene, const QString &id, QPointF pos = QPointF(0,0), bool value = true);
 
 private:
    void addToScene();

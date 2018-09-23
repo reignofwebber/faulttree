@@ -11,11 +11,13 @@ GraphicsScene::GraphicsScene(QObject *parent)
 //    text->setTextInteractionFlags(Qt::TextEditorInteraction);
 //    addItem(text);
 
+
 }
 
-
-QString GraphicsScene::getTempNodeId()
+void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    static int i = 0;
-    return QString("TEMP_") + QString::number(i++);
+    emit pressScene(event->scenePos());
+    QGraphicsScene::mousePressEvent(event);
 }
+
+
