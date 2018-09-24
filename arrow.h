@@ -10,21 +10,21 @@ public:
     Arrow(const QLineF &line, QGraphicsItem *parent = 0)
         : QGraphicsLineItem(line, parent)
     {
-
+        setFlags(QGraphicsItem::ItemIsSelectable);
     }
     Arrow(const QPointF &p1, const QPointF &p2, QGraphicsItem *parent = 0)
         : QGraphicsLineItem(QLineF(p1, p2), parent)
     {
-
+        setFlags(QGraphicsItem::ItemIsSelectable);
     }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
     {
+        Q_UNUSED(option);
+        Q_UNUSED(widget);
 
-        qDebug() << line().angle();
         QPointF p1(line().p1()), p2(line().p2());
         QPointF startPos, endPos;
-        qDebug() << "original pos..." << p1 << p2;
 
         double pi = acos(-1);
         startPos.setX(30*cos(line().angle()*pi/180) + p1.x());
@@ -34,7 +34,7 @@ public:
 
 
         painter->drawLine(QLineF(startPos, endPos));
-        qDebug() << "LINE POS " << startPos << endPos;
+
         QPointF circleCenterPos;
         circleCenterPos.setX(-4*cos(line().angle()*pi/180) + endPos.x());
         circleCenterPos.setY(4*sin(line().angle()*pi/180) + endPos.y());
@@ -42,6 +42,7 @@ public:
         painter->setBrush(Qt::black);
         painter->drawEllipse(circleCenterPos,4,4);
     }
+
 
 
 private:

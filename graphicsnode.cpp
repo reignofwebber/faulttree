@@ -4,7 +4,6 @@
 NodeItem::NodeItem(GraphicsScene *scene, const QString &id, QPointF pos, bool value)
     :m_scene(scene), id(id), value(true), radius(30), m_parentRelation(0)
 {
-    qDebug() << "Should.." << pos;
     m_node = new EllipseItem(pos.x(), pos.y(), radius, this);
     m_nodeId = new QGraphicsTextItem(id);
     m_nodeValue = new QGraphicsTextItem(QString::number(value));
@@ -26,20 +25,48 @@ NodeItem::NodeItem(GraphicsScene *scene, const QString &id, QPointF pos, bool va
 
 }
 
+NodeItem::~NodeItem()
+{
+    m_scene->removeItem(m_node);
+    m_scene->removeItem(m_nodeId);
+    m_scene->removeItem(m_nodeValue);
 
-void NodeItem::setParentRelation(Arrow *arrow)
+    //reserve for delete relation
+
+    delete m_node;
+    delete m_nodeId;
+    delete m_nodeValue;
+}
+
+void NodeItem::setParentRelation(Relation *relation)
 {
     if(m_parentRelation)
     {
-        m_scene->removeItem(m_parentRelation);
+//        m_scene->removeItem(m_parentRelation);
         delete m_parentRelation;
     }
-    m_parentRelation = arrow;
+    m_parentRelation = relation;
 }
 
-void NodeItem::addChildRelation(Arrow *arrow)
+void NodeItem::addChildRelation(Relation *relation)
 {
-    m_childRelation.append(arrow);
+    m_childRelations.append(relation);
+}
+
+void NodeItem::parentRelationReomved(Relation *relation)
+{
+    if(m_parentRelation == relation)
+    {
+        m_parentRelation = 0;
+    }else
+    {
+        qDebug() << "INVALID USE OF FUNCTION .. removeParenRelation";
+    }
+}
+
+void NodeItem::childRelationRemoved(Relation *relation)
+{
+    m_childRelations.removeOne(relation);
 }
 
 void NodeItem::onNodeMove(const QPointF &pos)
@@ -59,11 +86,11 @@ void NodeItem::onNodeMove(const QPointF &pos)
     }
 
     //relation move
-    foreach(Arrow *arrow, m_childRelation)
+    foreach(Relation *relation, m_childRelations)
     {
-        QLineF lineCopy(arrow->line());
+        QLineF lineCopy(relation->line());
         lineCopy.setP2(pos);
-        arrow->setLine(lineCopy);
+        relation->setLine(lineCopy);
     }
 }
 
@@ -74,3 +101,7 @@ void NodeItem::addToScene()
     m_scene->addItem(m_nodeId);
 }
 
+QPointF NodeItem::centerPos() const
+{
+    return m_node->centerPos();
+}

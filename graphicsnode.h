@@ -5,10 +5,12 @@
 #include <ellipseitem.h>
 
 #include "graphicsscene.h"
-#include "arrow.h"
+#include "relation.h"
 
 class GraphicsScene;
 class EllipseItem;
+
+class Relation;
 
 
 class NodeItem : public QObject
@@ -17,9 +19,15 @@ class NodeItem : public QObject
 
 public:
     NodeItem(GraphicsScene *scene, const QString &id, QPointF pos = QPointF(0,0), bool value = true);
+    ~NodeItem();
 
-    void setParentRelation(Arrow *arrow);
-    void addChildRelation(Arrow *arrow);
+    void setParentRelation(Relation *arrow);
+    void addChildRelation(Relation *arrow);
+
+    void parentRelationReomved(Relation *relation);
+    void childRelationRemoved(Relation *relation);
+
+    QPointF centerPos() const;
 
 private:
    void addToScene();
@@ -40,8 +48,8 @@ private:
     QGraphicsTextItem *m_nodeId;
     QGraphicsTextItem *m_nodeValue;
 
-    Arrow * m_parentRelation;
-    QList<Arrow *> m_childRelation;
+    Relation * m_parentRelation;
+    QList<Relation *> m_childRelations;
 
 };
 

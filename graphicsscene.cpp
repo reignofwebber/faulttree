@@ -12,6 +12,10 @@ GraphicsScene::GraphicsScene(QObject *parent)
 //    addItem(text);
     NodeItem *node = new NodeItem(this, getTempNodeId());
 
+    QGraphicsLineItem *item = new QGraphicsLineItem(0,0,100,100);
+    item->setFlags(QGraphicsItem::ItemIsSelectable);
+    addItem(item);
+
 }
 
 void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -59,15 +63,13 @@ void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             EllipseItem *startItem = qgraphicsitem_cast<EllipseItem *>(startItems.first());
             EllipseItem *endItem = qgraphicsitem_cast<EllipseItem *>(endItems.first());
 
-            QLineF line(startItem->centerPos(), endItem->centerPos());
-            Arrow *arrow = new Arrow(line);
+            Relation *relation = new Relation(this, endItem->getNode(), startItem->getNode());
 //            QGraphicsLineItem * item = new QGraphicsLineItem(line);
 //            startItem->addArrow(arrow);
 //            endItem->addArrow(arrow);
 //            arrow->setZValue(-1000.0);
-            startItem->getNode()->setParentRelation(arrow);
-            endItem->getNode()->addChildRelation(arrow);
-            addItem(arrow);
+            startItem->getNode()->setParentRelation(relation);
+            endItem->getNode()->addChildRelation(relation);
 //            addItem(item);
         }
 
@@ -100,7 +102,6 @@ void GraphicsScene::onScenePressed(const QPointF &pos)
         break;
     case NODE:
         node = new NodeItem(this, getTempNodeId(), pos);
-        qDebug() << "OnScenePressed .." << pos;
         break;
     case LINE:
         tmpLine = new QGraphicsLineItem(QLineF(pos,pos));

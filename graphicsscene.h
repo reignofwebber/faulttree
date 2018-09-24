@@ -4,7 +4,7 @@
 #include <QtWidgets>
 
 #include "graphicsnode.h"
-#include "arrow.h"
+#include "relation.h"
 
 class GraphicsScene : public QGraphicsScene
 {

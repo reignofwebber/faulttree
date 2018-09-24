@@ -24,9 +24,7 @@ public:
                     QGraphicsItem::ItemIsSelectable
                     | QGraphicsItem::ItemIsMovable
                     | QGraphicsItem::ItemSendsGeometryChanges);
-        qDebug() << "customELlipse" << ".." << x << ".." << y;
         setPos(x - r,y - r);
-        qDebug() << "position  " << pos() << ".." << scenePos();
     }
 
     virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value)
@@ -40,7 +38,7 @@ public:
 
     int type() const override { return Type;}
 
-    QPointF centerPos()
+    QPointF centerPos() const
     {
         return pos() + QPointF(m_r, m_r);
     }

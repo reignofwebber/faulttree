@@ -5,7 +5,8 @@ SOURCES += \
     mainwindow.cpp \
     graphicsnode.cpp \
     graphicsscene.cpp \
-    diagramtextitem.cpp
+    diagramtextitem.cpp \
+    relation.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -13,7 +14,8 @@ HEADERS += \
     graphicsscene.h \
     diagramtextitem.h \
     ellipseitem.h \
-    arrow.h
+    arrow.h \
+    relation.h
 
 FORMS += \
     mainwindow.ui
