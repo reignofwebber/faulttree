@@ -12,7 +12,8 @@ HEADERS += \
     graphicsnode.h \
     graphicsscene.h \
     diagramtextitem.h \
-    ellipseitem.h
+    ellipseitem.h \
+    arrow.h
 
 FORMS += \
     mainwindow.ui

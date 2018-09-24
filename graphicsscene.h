@@ -4,6 +4,7 @@
 #include <QtWidgets>
 
 #include "graphicsnode.h"
+#include "arrow.h"
 
 class GraphicsScene : public QGraphicsScene
 {
@@ -21,6 +22,8 @@ public:
     GraphicsScene(QObject *parent = 0);
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 
     QString getTempNodeId();
@@ -34,6 +37,7 @@ public slots:
 signals:
     void pressScene(const QPointF &);
 private:
+    QGraphicsLineItem *tmpLine;
     Mode m_mode;
 };
 
