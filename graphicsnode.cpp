@@ -64,7 +64,6 @@ void NodeItem::onNodeMove(const QPointF &pos)
         QLineF lineCopy(arrow->line());
         lineCopy.setP2(pos);
         arrow->setLine(lineCopy);
-
     }
 }
 

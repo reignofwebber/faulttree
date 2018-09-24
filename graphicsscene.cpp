@@ -3,7 +3,7 @@
 
 
 GraphicsScene::GraphicsScene(QObject *parent)
-    : QGraphicsScene(parent),tmpLine(0)
+    : QGraphicsScene(parent),tmpLine(0),m_mode(CURSOR)
 {
 //    GraphicsNode *node = new GraphicsNode(getTempNodeId());
 //    DiagramTextItem *text = new DiagramTextItem("jjjj");
@@ -103,7 +103,6 @@ void GraphicsScene::onScenePressed(const QPointF &pos)
         qDebug() << "OnScenePressed .." << pos;
         break;
     case LINE:
-        qDebug() << "LINE POS  " << pos;
         tmpLine = new QGraphicsLineItem(QLineF(pos,pos));
                    tmpLine->setPen(QPen(Qt::red, 2));
                    addItem(tmpLine);
