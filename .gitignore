@@ -1,2 +1,5 @@
 *.autosave
 *.user
+build-*/
+.vs/
+CMakeSettings.json
