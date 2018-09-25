@@ -5,6 +5,7 @@ Relation::Relation(GraphicsScene *scene, NodeItem *parentNode, NodeItem *childNo
 {
     QLineF line(childNode->centerPos(), parentNode->centerPos());
     m_arrow = new Arrow(line);
+    m_arrow->setZValue(-200);
 
     m_expect = new QGraphicsTextItem(QString::number(expectValue));
     m_expect->setFlags(QGraphicsItem::ItemIsSelectable);

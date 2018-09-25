@@ -23,6 +23,7 @@ public:
         Q_UNUSED(option);
         Q_UNUSED(widget);
 
+
         QPointF p1(line().p1()), p2(line().p2());
         QPointF startPos, endPos;
 

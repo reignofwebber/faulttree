@@ -47,6 +47,7 @@ private:
     EllipseItem *m_node;
     QGraphicsTextItem *m_nodeId;
     QGraphicsTextItem *m_nodeValue;
+    QGraphicsTextItem *m_formula;
 
     QList<Relation *> m_parentRelations;
     QList<Relation *> m_childRelations;
