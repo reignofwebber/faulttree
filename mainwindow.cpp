@@ -14,9 +14,6 @@ MainWindow::MainWindow(QWidget *parent)
     graphicsView->setScene(m_scene);
 
 
-//    DiagramTextItem * text = new DiagramTextItem("abc");
-//    m_scene->addItem(text);
-
 
     connect(actionCursor,SIGNAL(toggled(bool)), m_scene, SLOT(setCurrentItem(bool)));
     connect(actionNode, SIGNAL(toggled(bool)), m_scene, SLOT(setCurrentItem(bool)));

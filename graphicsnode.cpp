@@ -2,7 +2,7 @@
 
 
 NodeItem::NodeItem(GraphicsScene *scene, const QString &id, QPointF pos, bool value)
-    :m_scene(scene), id(id), value(true), radius(30), m_parentRelation(0)
+    :m_scene(scene), id(id), value(true), radius(30)
 {
     m_node = new EllipseItem(pos.x(), pos.y(), radius, this);
     m_nodeId = new QGraphicsTextItem(id);
@@ -38,14 +38,9 @@ NodeItem::~NodeItem()
     delete m_nodeValue;
 }
 
-void NodeItem::setParentRelation(Relation *relation)
+void NodeItem::addParentRelation(Relation *relation)
 {
-    if(m_parentRelation)
-    {
-//        m_scene->removeItem(m_parentRelation);
-        delete m_parentRelation;
-    }
-    m_parentRelation = relation;
+    m_parentRelations.append(relation);
 }
 
 void NodeItem::addChildRelation(Relation *relation)
@@ -55,13 +50,7 @@ void NodeItem::addChildRelation(Relation *relation)
 
 void NodeItem::parentRelationReomved(Relation *relation)
 {
-    if(m_parentRelation == relation)
-    {
-        m_parentRelation = 0;
-    }else
-    {
-        qDebug() << "INVALID USE OF FUNCTION .. removeParenRelation";
-    }
+    m_parentRelations.removeOne(relation);
 }
 
 void NodeItem::childRelationRemoved(Relation *relation)
@@ -78,11 +67,11 @@ void NodeItem::onNodeMove(const QPointF &pos)
 
 
     //parent relation move
-    if(m_parentRelation)
+    foreach(Relation *relation, m_parentRelations)
     {
-        QLineF lineCopy(m_parentRelation->line());
+        QLineF lineCopy(relation->line());
         lineCopy.setP1(pos);
-        m_parentRelation->setLine(lineCopy);
+        relation->setLine(lineCopy);
     }
 
     //relation move

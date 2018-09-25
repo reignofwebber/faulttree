@@ -21,7 +21,7 @@ public:
     NodeItem(GraphicsScene *scene, const QString &id, QPointF pos = QPointF(0,0), bool value = true);
     ~NodeItem();
 
-    void setParentRelation(Relation *arrow);
+    void addParentRelation(Relation *arrow);
     void addChildRelation(Relation *arrow);
 
     void parentRelationReomved(Relation *relation);
@@ -48,7 +48,7 @@ private:
     QGraphicsTextItem *m_nodeId;
     QGraphicsTextItem *m_nodeValue;
 
-    Relation * m_parentRelation;
+    QList<Relation *> m_parentRelations;
     QList<Relation *> m_childRelations;
 
 };

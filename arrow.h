@@ -32,8 +32,8 @@ public:
         endPos.setX(-30*cos(line().angle()*pi/180) + p2.x());
         endPos.setY(30*sin(line().angle()*pi/180) + p2.y());
 
-
-        painter->drawLine(QLineF(startPos, endPos));
+        QLineF exactLine(startPos, endPos);
+        painter->drawLine(exactLine);
 
         QPointF circleCenterPos;
         circleCenterPos.setX(-4*cos(line().angle()*pi/180) + endPos.x());
@@ -41,6 +41,15 @@ public:
 
         painter->setBrush(Qt::black);
         painter->drawEllipse(circleCenterPos,4,4);
+        if(isSelected())
+        {
+            painter->setPen(QPen(Qt::black,1,Qt::DashLine));
+            QLineF line = exactLine;
+            line.translate(0,4.0);
+            painter->drawLine(line);
+            line.translate(0,-8.0);
+            painter->drawLine(line);
+        }
     }
 
 

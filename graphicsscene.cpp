@@ -10,11 +10,7 @@ GraphicsScene::GraphicsScene(QObject *parent)
 //    text->setFlag(QGraphicsItem::ItemIsSelectable);
 //    text->setTextInteractionFlags(Qt::TextEditorInteraction);
 //    addItem(text);
-    NodeItem *node = new NodeItem(this, getTempNodeId());
-
-    QGraphicsLineItem *item = new QGraphicsLineItem(0,0,100,100);
-    item->setFlags(QGraphicsItem::ItemIsSelectable);
-    addItem(item);
+//    NodeItem *node = new NodeItem(this, getTempNodeId());
 
 }
 
@@ -68,7 +64,7 @@ void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 //            startItem->addArrow(arrow);
 //            endItem->addArrow(arrow);
 //            arrow->setZValue(-1000.0);
-            startItem->getNode()->setParentRelation(relation);
+            startItem->getNode()->addParentRelation(relation);
             endItem->getNode()->addChildRelation(relation);
 //            addItem(item);
         }
