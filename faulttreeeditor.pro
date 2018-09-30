@@ -6,14 +6,12 @@ SOURCES += \
     mainwindow.cpp \
     graphicsnode.cpp \
     graphicsscene.cpp \
-    diagramtextitem.cpp \
     relation.cpp
 
 HEADERS += \
     mainwindow.h \
     graphicsnode.h \
     graphicsscene.h \
-    diagramtextitem.h \
     ellipseitem.h \
     arrow.h \
     relation.h
@@ -26,16 +24,16 @@ RESOURCES += \
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/external/libs/ -lfaulttree
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/external/libs/ -lfaulttreed
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/external/libs/debug/ -lfaulttree
 else:unix: LIBS += -L$$PWD/external/libs/ -lfaulttree
 
 INCLUDEPATH += $$PWD/external/include
 DEPENDPATH += $$PWD/external/include
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/external/libs/libfaulttree.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/external/libs/libfaulttreed.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/external/libs/faulttree.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/external/libs/faulttreed.lib
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/external/libs/release/libfaulttree.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/external/libs/debug/libfaulttree.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/external/libs/release/faulttree.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/external/libs/debug/faulttree.lib
 else:unix: PRE_TARGETDEPS += $$PWD/external/libs/libfaulttree.a
 
 
@@ -53,3 +51,6 @@ win32 {
     system(xcopy $$config_src_dir $$config_dst_dir /y /e)
 
 }
+
+DISTFILES += \
+    config/config.json

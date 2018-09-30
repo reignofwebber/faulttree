@@ -13,6 +13,10 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 public:
     MainWindow(QWidget *parent = 0);
 
+public slots:
+    void open();
+    void save();
+
 private:
     GraphicsScene *m_scene;
 

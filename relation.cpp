@@ -45,3 +45,14 @@ void Relation::addToScene()
     m_scene->addItem(m_arrow);
     m_scene->addItem(m_expect);
 }
+
+std::string Relation::childId()
+{
+    return m_childNode->id();
+}
+
+bool Relation::expectValue()
+{
+    QVariant tmp = m_expect->toPlainText();
+    return tmp.toBool();
+}

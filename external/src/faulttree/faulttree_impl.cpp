@@ -2,8 +2,9 @@
 //
 
 #include "faulttree_impl.h"
-#include <rapidjson/document.h>
-#include <rapidjson/istreamwrapper.h>
+
+
+#include <string>
 
 using namespace rapidjson;
 
@@ -33,6 +34,11 @@ bool FaultTree::parse(const std::string &fileName)
 		std::cout << "Can not Open " << fileName << std::endl;
 		return false;
 	}
+	//std::string line, jsonText;
+	//while (config >> line)
+	//{
+	//	jsonText.append(line);
+	//}
 	IStreamWrapper isw(config);
 
 	if (document.ParseStream(isw).HasParseError())
@@ -41,6 +47,11 @@ bool FaultTree::parse(const std::string &fileName)
 		return false;
 	}
 
+	//if (document.Parse(jsonText.c_str()).HasParseError())
+	//{
+	//	std::cout << "Json File has ERROR!!" << std::endl;
+	//	return false;
+	//}
 
 	assert(document.IsArray());
 
@@ -50,10 +61,18 @@ bool FaultTree::parse(const std::string &fileName)
 		FaultNode *node = new FaultNode;
 		auto object = itr->GetObject();
 		std::string id(object["id"].GetString());
-
+		bool a = id == "101"? true : false;
 		std::string formula;
-		std::vector<std::string> children;
-		std::vector<bool> expectValue;
+
+		if (object.HasMember("name"))
+		{
+			node->name = object["name"].GetString();
+		}
+
+		if (object.HasMember("desc"))
+		{
+			node->desc = object["desc"].GetString();
+		}
 		
 		if (object.HasMember("formula"))
 		{
@@ -61,7 +80,7 @@ bool FaultTree::parse(const std::string &fileName)
 		}
 		if (object.HasMember("children"))
 		{
-			parseChildren(object["children"], node->children, node->expectValue);
+			parseChildren(object["children"], node->children);
 		}
 
 		if (m_faultTree.find(id) != m_faultTree.end())
@@ -72,7 +91,20 @@ bool FaultTree::parse(const std::string &fileName)
 
 		
 	}
+	parseStructure();
 	return true;
+}
+
+bool FaultTree::parseStructure(const std::string &id, int level)
+{
+	m_structure[level].push_back(id);
+	auto node = getNode(id);
+	if (node == nullptr) return true;
+
+	for (const auto &child : node->children)
+	{
+		parseStructure(child.id, level + 1);
+	}
 }
 
 bool FaultTree::input(const std::string &id, bool value)
@@ -81,6 +113,16 @@ bool FaultTree::input(const std::string &id, bool value)
 	m_faultTree[id]->caled = true;
 	m_faultTree[id]->value = value;
 	return true;
+}
+
+void FaultTree::reset()
+{
+	for (auto itr = m_faultTree.begin();
+		itr != m_faultTree.end(); ++itr)
+	{
+		FaultNode *node = itr->second;
+		node->caled = false;
+	}
 }
 
 bool FaultTree::preCheck()
@@ -117,11 +159,14 @@ bool FaultTree::postCheck()
 	return true;
 }
 
-bool FaultTree::calculate(const std::string &id)
+bool FaultTree::calculate(bool check, const std::string &id)
 {
+	if (check && !preCheck()) return false;
 	auto node = getNode(id);
 	if (node == nullptr) return false;
-	calculate(node);
+	if(!calculate(node)) return false;
+	if (check && !postCheck()) return false;
+	return true;
 }
 
 bool FaultTree::calculate(FaultNode *node)
@@ -130,30 +175,29 @@ bool FaultTree::calculate(FaultNode *node)
 
 	for (const auto& child : node->children)
 	{
-		auto childNode = getNode(child);
+		auto childNode = getNode(child.id);
 		if (childNode != nullptr && !childNode->caled) calculate(childNode);
 	}
 
 	//需要推导的默认为true
-	assert(node->children.size() == node->expectValue.size());
+//	assert(node->children.size() == node->expectValue.size());
 
 	if (node->formula == "all")
 	{
-		auto itr_id = node->children.begin();
-		auto itr_expect = node->expectValue.begin();
+		auto itr = node->children.begin();
 
-		for (; itr_id != node->children.end(); ++itr_id, ++itr_expect)
+		for (; itr != node->children.end(); ++itr)
 		{
-			auto childNode = getNode(*itr_id);
+			auto childNode = getNode(itr->id);
 			if (childNode == nullptr) continue;
 			assert(childNode->caled);
 
-			if (childNode->value != *itr_expect)
+			if (childNode->value != itr->expectValue)
 			{
 				break;
 			}
 		}
-		if (itr_id != node->children.end())
+		if (itr != node->children.end())
 		{
 			node->value = false;
 		}
@@ -166,22 +210,21 @@ bool FaultTree::calculate(FaultNode *node)
 	}
 	else if (node->formula == "least")
 	{
-		auto itr_id = node->children.begin();
-		auto itr_expect = node->expectValue.begin();
+		auto itr = node->children.begin();
 
-		for (; itr_id != node->children.end(); ++itr_id, ++itr_expect)
+		for (; itr != node->children.end(); ++itr)
 		{
-			auto childNode = getNode(*itr_id);
+			auto childNode = getNode(itr->id);
 			if (childNode == nullptr) continue;
 			assert(childNode->caled);
 
-			if (childNode->value == *itr_expect)
+			if (childNode->value == itr->expectValue)
 			{
 				break;
 			}
 		}
 
-		if (itr_id != node->children.end())
+		if (itr != node->children.end())
 		{
 			node->value = true;
 		}
@@ -195,17 +238,16 @@ bool FaultTree::calculate(FaultNode *node)
 	}
 	else if (node->formula == "only")
 	{
-		auto itr_id = node->children.begin();
-		auto itr_expect = node->expectValue.begin();
+		auto itr = node->children.begin();
 
 		auto cnt = 0;
-		for (; itr_id != node->children.end(); ++itr_id, ++itr_expect)
+		for (; itr != node->children.end(); ++itr)
 		{
-			auto childNode = getNode(*itr_id);
+			auto childNode = getNode(itr->id);
 			if (childNode == nullptr) continue;
 			assert(childNode->caled);
 
-			if (childNode->value == *itr_expect)
+			if (childNode->value == itr->expectValue)
 			{
 				++cnt;
 			}
@@ -265,19 +307,18 @@ std::string FaultTree::getFormula(const rapidjson::Value &val)
 	return "";
 }
 
-void FaultTree::parseChildren(const rapidjson::Value &val, std::vector<std::string> &children, std::vector<bool> &expectValue)
+void FaultTree::parseChildren(const rapidjson::Value &val, std::vector<Child> &children)
 {
 	if (val.IsArray())
 	{
 		for (Value::ConstValueIterator itr = val.Begin();
 			itr != val.End(); ++itr)
 		{
-			std::string id;
-			bool expect;
-
+			Child child;
+			
 			if (itr->IsString())
 			{
-				splitIdAndExpect(itr->GetString(), id, expect);
+				splitIdAndExpect(itr->GetString(), child.id, child.expectValue);
 			}
 			else if(itr->IsArray())
 			{
@@ -285,11 +326,11 @@ void FaultTree::parseChildren(const rapidjson::Value &val, std::vector<std::stri
 
 				if (m_mainControl == main_1)
 				{
-					splitIdAndExpect(selectControl[0].GetString(), id, expect);
+					splitIdAndExpect(selectControl[0].GetString(), child.id, child.expectValue);
 				}
 				else if (m_mainControl == main_6)
 				{
-					splitIdAndExpect(selectControl[1].GetString(), id, expect);
+					splitIdAndExpect(selectControl[1].GetString(), child.id, child.expectValue);
 				}
 
 			}
@@ -297,8 +338,7 @@ void FaultTree::parseChildren(const rapidjson::Value &val, std::vector<std::stri
 			{
 				assert(false);
 			}
-			children.push_back(id);
-			expectValue.push_back(expect);
+			children.push_back(child);
 		}
 	}
 	else if (val.IsObject())
@@ -310,12 +350,12 @@ void FaultTree::parseChildren(const rapidjson::Value &val, std::vector<std::stri
 		case FaultTree::ATB:
 			itr = val.FindMember("3");
 			assert(itr->value.IsArray());
-			parseChildren(itr->value, children, expectValue);
+			parseChildren(itr->value, children);
 			break;
 		default:
 			itr = val.FindMember("else");
 			assert(itr->value.IsArray());
-			parseChildren(itr->value, children, expectValue);
+			parseChildren(itr->value, children);
 			break;
 		}
 	}
@@ -359,6 +399,156 @@ FaultNode *FaultTree::getNode(const std::string &id)
 
 FaultTree::~FaultTree()
 {
+}
+
+int FaultTree::depth(const std::string &id)
+{
+	auto node = getNode(id);
+	if (node == nullptr) return 1;
+	
+	int maxChildDepth = 0;
+
+	for (const auto &child : node->children)
+	{
+		int childDepth = depth(child.id);
+		if (maxChildDepth < childDepth)
+		{
+			maxChildDepth = childDepth;
+		}
+	}
+	return maxChildDepth + 1;
+}
+
+int FaultTree::range() const
+{
+	int range = 0;
+	for (auto itr = m_faultTree.begin(); itr != m_faultTree.end(); ++itr)
+	{
+		auto id = itr->first;
+		if (id.find("DT") != std::string::npos)
+		{
+			++range;
+		}
+	}
+	return range;
+}
+
+std::vector<std::string> FaultTree::maxDepthBranch(const std::string &id)
+{
+	std::vector<std::string> maxBranch;
+	auto node = getNode(id);
+	if (node == nullptr) return maxBranch;
+
+	for (const auto &child : node->children)
+	{
+		auto branch = maxDepthBranch(child.id);
+		if (maxBranch.size() < branch.size())
+		{
+			maxBranch = branch;
+		}
+	}
+	maxBranch.push_back(id);
+
+	return maxBranch;
+}
+
+std::string FaultTree::toJson()
+{
+	StringBuffer s;
+	Writer<StringBuffer> writer(s);
+	toJsonAux(writer, "1");
+	
+	return std::string(s.GetString());
+}
+
+bool FaultTree::toJsonAux(rapidjson::Writer<StringBuffer> &writer, const std::string &id)
+{
+	if (m_faultTree.find(id) == m_faultTree.end())
+	{
+		std::cout << "TO JSON ERROR , CAN NOT FIND id " << id << std::endl;
+		return false;
+	}
+	FaultNode *node = m_faultTree[id];
+	
+	writer.StartObject();
+
+	writer.Key("id");
+	writer.String(id.c_str());
+	writer.Key("name");
+	writer.String(node->name.c_str());
+	writer.Key("value");
+	writer.Bool(node->value);
+	writer.Key("formula");
+	writer.String(node->formula.c_str());
+	writer.Key("desc");
+	writer.String(node->desc.c_str());
+	
+	writer.Key("children");
+	writer.StartArray();
+	for (const auto &child : node->children)
+	{
+		toJsonAux(writer, child.id);
+	}
+	writer.EndArray();
+
+	writer.EndObject();
+	return true;
+}
+
+std::map<int, std::vector<std::string>> &FaultTree::getStructure()
+{
+	return m_structure;
+}
+
+bool FaultTree::addNode(const std::string &id, FaultNode *node)
+{
+	m_faultTree[id] = node;
+}
+
+bool FaultTree::esrap(const std::string &file)
+{
+	StringBuffer s;
+	PrettyWriter<StringBuffer> writer(s);
+
+	writer.StartArray();
+	
+	for (auto itr = m_faultTree.begin();
+		itr != m_faultTree.end(); ++itr)
+	{
+		writer.StartObject();
+		
+		auto id = itr->first;
+		auto node = itr->second;
+
+		writer.Key("id");
+		writer.String(id.c_str());
+		writer.Key("name");
+		writer.String(node->name.c_str());
+		writer.Key("desc");
+		writer.String(node->desc.c_str());
+		writer.Key("formula");
+		writer.String(node->formula.c_str());
+		writer.Key("children");
+
+		writer.StartArray();
+		for (const auto &child : node->children)
+		{
+			std::string tmp = child.id;
+			tmp += ":";
+			tmp += std::to_string(child.expectValue);
+			writer.Key(tmp.c_str());
+		}
+		writer.EndArray();
+
+		writer.EndObject();
+	}
+	writer.EndArray();
+	
+
+	std::ofstream out(file);
+	out << s.GetString();
+	std::cout << s.GetString();
+	return true;
 }
 
 

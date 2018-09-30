@@ -17,7 +17,8 @@ public:
     Relation(GraphicsScene *scene, NodeItem *parentNode, NodeItem *childNode, bool expectValue = true);
     ~Relation();
 
-
+    std::string childId();
+    bool expectValue();
 
     void setLine(const QLineF &line);
 

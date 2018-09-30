@@ -2,17 +2,25 @@
 
 #include <map>
 
+struct Child
+{
+	std::string id;
+	bool expectValue;
+};
+
 struct FaultNode
 {
+	std::string name;
+	std::string desc;
 	std::string formula;
-	std::vector<std::string> children;
-	std::vector<bool> expectValue;
+	std::vector<Child> children;
+
 	bool value;
 	bool caled;
 	bool ignored;
 
 	FaultNode()
-		:value(false),
+		:value(true),
 		caled(false),
 		ignored(false)
 	{
@@ -49,12 +57,23 @@ public:
 	// 解析的配置文件路径
 	virtual bool parse(const std::string &) = 0;
 	// 开始计算
-	virtual bool calculate(const std::string &id = "1") = 0;
+	virtual bool calculate(bool check = true, const std::string &id = "1") = 0;
+	// 返回JSON
+	virtual std::string toJson() = 0;
+	// add Node
+	virtual bool addNode(const std::string &, FaultNode *) = 0;
+	//reset tree
+	virtual void reset() = 0;
+	//write to json (esrap)
+	virtual bool esrap(const std::string &) = 0;
+	// 结点深度
+	virtual int depth(const std::string &id = "1") = 0;
+	// 结点宽度
+	virtual int range() const = 0;
 
-	// 检查所有叶子节点都有值
-	virtual bool preCheck() = 0;
-	// 检查所有节点都被计算
-	virtual bool postCheck() = 0;
+	virtual std::vector<std::string> maxDepthBranch(const std::string &id = "1") = 0;
+
+	virtual std::map<int, std::vector<std::string>>& getStructure() = 0;
 
 };
 

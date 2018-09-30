@@ -3,5 +3,10 @@
         <file>images/node.png</file>
         <file>images/line.png</file>
         <file>images/cursor.png</file>
+        <file>images/calculate.png</file>
+        <file>images/new.png</file>
+        <file>images/save.png</file>
+        <file>images/Clearup.png</file>
+        <file>images/open.png</file>
     </qresource>
 </RCC>

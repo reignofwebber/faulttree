@@ -7,6 +7,7 @@
 #include "graphicsscene.h"
 #include "relation.h"
 
+class Child;
 class GraphicsScene;
 class EllipseItem;
 
@@ -18,7 +19,7 @@ class NodeItem : public QObject
     Q_OBJECT
 
 public:
-    NodeItem(GraphicsScene *scene, const QString &id, QPointF pos = QPointF(0,0), bool value = true);
+    NodeItem(GraphicsScene *scene, const QString &id, QPointF pos = QPointF(0,0), const QString &formula = "all", bool value = true);
     ~NodeItem();
 
     void addParentRelation(Relation *arrow);
@@ -28,6 +29,21 @@ public:
     void childRelationRemoved(Relation *relation);
 
     QPointF centerPos() const;
+    QString getNodeId() const;
+
+    void setValue(bool value);
+    void setInitalCaled();
+
+    void updateValue(bool value);
+    void setCaled(bool value);
+
+    std::string id();
+    std::string name();
+    bool value();
+    std::string formula();
+    std::vector<Child> children();
+
+
 
 private:
    void addToScene();
@@ -40,8 +56,8 @@ private slots:
 private:
     GraphicsScene *m_scene;
 
-    QString id;
-    bool value;
+    QString m_id;
+    bool val;
     qreal radius;
 
     EllipseItem *m_node;
