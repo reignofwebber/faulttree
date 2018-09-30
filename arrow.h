@@ -2,21 +2,27 @@
 #define ARROW_H
 
 #include <QtWidgets>
+#include "relation.h"
 
+class Relation;
 
 class Arrow : public QGraphicsLineItem
 {
 public:
-    Arrow(const QLineF &line, QGraphicsItem *parent = 0)
+
+    enum { Type = UserType + 2 };
+
+    Arrow(Relation *relation, const QLineF &line, QGraphicsItem *parent = 0)
         : QGraphicsLineItem(line, parent)
     {
+        m_relation = relation;
         setFlags(QGraphicsItem::ItemIsSelectable);
     }
-    Arrow(const QPointF &p1, const QPointF &p2, QGraphicsItem *parent = 0)
-        : QGraphicsLineItem(QLineF(p1, p2), parent)
-    {
-        setFlags(QGraphicsItem::ItemIsSelectable);
-    }
+//    Arrow(const QPointF &p1, const QPointF &p2, QGraphicsItem *parent = 0)
+//        : QGraphicsLineItem(QLineF(p1, p2), parent)
+//    {
+//        setFlags(QGraphicsItem::ItemIsSelectable);
+//    }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
     {
@@ -53,10 +59,16 @@ public:
         }
     }
 
+    Relation *getRelation() const
+    {
+        return m_relation;
+    }
+
+    int type() const override { return Type; }
 
 
 private:
-
+    Relation *m_relation;
 
 };
 

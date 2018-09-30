@@ -241,7 +241,7 @@ void GraphicsScene::displayTree()
                 qDebug() << "Can not find child id in view .. " << QString::fromStdString(child.id);
             }
             Relation *relation = new Relation(this, m_nodeItems[id], m_nodeItems[child.id], child.expectValue);
-            m_relations.push_back(relation);
+//            m_relations.push_back(relation);
             m_nodeItems[id]->addChildRelation(relation);
             m_nodeItems[child.id]->addParentRelation(relation);
         }
@@ -292,8 +292,24 @@ void GraphicsScene::save(const QString &fileName)
     m_tree->esrap(fileName.toStdString());
 }
 
-
-
+void GraphicsScene::deleteItem()
+{
+    foreach(QGraphicsItem *item, selectedItems())
+    {
+        if(item->type() == EllipseItem::Type)
+        {
+            EllipseItem *e = qgraphicsitem_cast<EllipseItem *>(item);
+            NodeItem *node = e->getNode();
+            m_nodeItems.erase(node->id());
+            delete node;
+        }
+        else if(item->type() == Arrow::Type)
+        {
+            Arrow *a = qgraphicsitem_cast<Arrow *>(item);
+            delete a->getRelation();
+        }
+    }
+}
 
 
 

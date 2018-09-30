@@ -4,7 +4,7 @@ Relation::Relation(GraphicsScene *scene, NodeItem *parentNode, NodeItem *childNo
     :m_scene(scene), m_expectValue(expectValue), m_parentNode(parentNode), m_childNode(childNode)
 {
     QLineF line(childNode->centerPos(), parentNode->centerPos());
-    m_arrow = new Arrow(line);
+    m_arrow = new Arrow(this, line);
     m_arrow->setZValue(-200);
 
     m_expect = new QGraphicsTextItem(QString::number(expectValue));

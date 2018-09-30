@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(actionCursor,SIGNAL(toggled(bool)), m_scene, SLOT(setCurrentItem(bool)));
     connect(actionNode, SIGNAL(toggled(bool)), m_scene, SLOT(setCurrentItem(bool)));
     connect(actionLine,SIGNAL(toggled(bool)), m_scene, SLOT(setCurrentItem(bool)));
+    connect(actionDelete, SIGNAL(triggered()), m_scene, SLOT(deleteItem()));
     connect(actionCalculate, SIGNAL(triggered()), m_scene, SLOT(calculate()));
     connect(actionClear, SIGNAL(triggered()), m_scene, SLOT(clear()));
 

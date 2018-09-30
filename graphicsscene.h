@@ -41,6 +41,7 @@ public slots:
     void calculate();
     void clear();
     void newScene();
+    void deleteItem();
 
 private:
     void displayTree();

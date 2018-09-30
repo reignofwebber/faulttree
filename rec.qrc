@@ -8,5 +8,6 @@
         <file>images/save.png</file>
         <file>images/Clearup.png</file>
         <file>images/open.png</file>
+        <file>images/delete.png</file>
     </qresource>
 </RCC>

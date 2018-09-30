@@ -43,7 +43,7 @@ public:
         return pos() + QPointF(m_r, m_r);
     }
 
-    NodeItem *getNode()
+    NodeItem *getNode() const
     {
         return m_node;
     }

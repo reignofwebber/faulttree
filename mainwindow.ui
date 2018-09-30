@@ -40,11 +40,12 @@
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
-     <string>Tools</string>
+     <string>Edit</string>
     </property>
     <addaction name="actionCursor"/>
     <addaction name="actionNode"/>
     <addaction name="actionLine"/>
+    <addaction name="actionDelete"/>
    </widget>
    <widget class="QMenu" name="menuCalculate">
     <property name="title">
@@ -74,6 +75,7 @@
    <addaction name="actionCursor"/>
    <addaction name="actionNode"/>
    <addaction name="actionLine"/>
+   <addaction name="actionDelete"/>
    <addaction name="separator"/>
    <addaction name="actionCalculate"/>
    <addaction name="actionClear"/>
@@ -170,6 +172,18 @@
    </property>
    <property name="text">
     <string>Open</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="icon">
+    <iconset resource="rec.qrc">
+     <normaloff>:/images/delete.png</normaloff>:/images/delete.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
    </property>
   </action>
  </widget>
